@@ -19,27 +19,36 @@ app.post('/events', (req, res) => {
     console.log("Received event:", req.body.type);
     const { type, data } = req.body;
 
-    switch (type) {
-        case "PostCreated":
-            const { id: postid, title } = data;
-            posts[postid] = { id: postid, title, comments: [] };
 
-            break;
+    if (type === "PostCreated") {
 
-        case "CommentCreated":
-            const { id: commentId, content, postId } = data;
-
-            const post = posts[postId];
-            if (post) {
-                post.comments.push({ commentId, content });
-            }
-
-            break;
-
-        default:
-            console.warning("uhnandled event type");
-            break;
+        const { id: postid, title } = data;
+        posts[postid] = { id: postid, title, comments: [] };
     }
+
+    if (type === "CommentCreated") {
+        const { id, content, postId, status } = data;
+
+        const post = posts[postId];
+        if (post) {
+            post.comments.push({ id, content, status });
+        }
+
+    }
+
+    if (type === "CommentUpdated") {
+        const { id, content, postId, status } = data;
+
+        const post = posts[postId];
+        const comment = post.comments.find((c) => {
+            return c.id === id;
+        });
+
+        comment.status = status;
+        comment.comment = content; 
+
+    }
+
 
     res.send({});
 });
