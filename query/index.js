@@ -62,7 +62,7 @@ app.listen(4002, async () => {
     console.log('Checking events');
 
     try {
-        const res = await axios.get("http://localhost:4005/events");
+        const res = await axios.get("http://event-bus-srv:4005/events");
         if (!res.data || res.data.length === 0) {
             console.log('no event to parse');
         } else {
